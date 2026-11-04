@@ -41,7 +41,8 @@ npm run build        # must finish with no errors before you submit
 What did the page look like in DevTools phone mode **before** adding the viewport meta tag?
 What changed **after** adding it?
 
-> Before the viewport tag in DevTools phone mode (iPhone SE), the page looked zoomed out and tiny. The text was hard to read, and the whole layout looked like a shrunken desktop page, even though it is built with React. This happens because, without the tag, mobile browsers pretend the screen is about 980px wide and then shrink the whole page to fit. Because of that, our phone CSS and our 768px and 1024px media queries did not behave the way we planned. After adding the viewport tag
+> Prior to adding the viewport meta tag, the page rendered as a shrunken desktop site on mobile devices (e.g., iPhone SE). The browser emulated a 980px desktop width and zoomed out the entire interface, making text unreadable and preventing our mobile CSS and media queries from triggering correctly. After adding the viewport tag, the browser accurately respected the device's actual width, correctly rendering the mobile layout, executing our breakpoints, and scaling the text to a readable size.
+
 
 ## DevTools test results
 
