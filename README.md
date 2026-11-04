@@ -33,7 +33,8 @@ npm run build        # must finish with no errors before you submit
 | --- | --- | --- | --- | --- |
 | 1 (leader) | Balabat, Charm Angel | charmbalabat-ctrl | `base.css` | Experiment 0, then added the viewport meta tag to index.html. Styled the page layout and brand panel with CSS Grid, with one column on phones, 2 columns from 1024px, and a centered 1200px container from 1280px. Created the repo and added teammates. |
 | 2 | Mendoza, Mary Stephanie R.| Stephan7e | `nav.css` | I styled the navigation bar with Flexbox, so the links are stacked at 48px tall on phones and sit in one row, with the brand on the left, from 768px. |
-| 3 | De Gracia, Rafael O. | Rafaeldegracia23 | `form.css` | Styled the login card and form with Flexbox, with stacked 48px fields and buttons on phones. From 768px, the checkbox row and two bottom buttons sit side by side, and the card is capped at 32rem. |
+| 3 | De Gracia, Rafael O. | Rafaeldegracia23 | `form.css` | Styled the login card and form using a mobile-first Flexbox layout. Stacked fields and buttons to create 48px touch targets for mobile viewports. Added media queries starting at 768px to align the checkbox option row and secondary action buttons side-by-side, capping the card width at 32rem.
+|
 
 ## Experiment 0: the page without the viewport tag
 
