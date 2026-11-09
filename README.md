@@ -34,7 +34,6 @@ npm run build        # must finish with no errors before you submit
 | Section | ITB |
 | Repository URL | https://github.com/charmbalabat-ctrl/ccc181-week10-group8 |
 
-
 ## Members (each member fills in their own row in their own commit)
 
 
@@ -42,8 +41,8 @@ npm run build        # must finish with no errors before you submit
 | --- | --- | --- | --- | --- |
 | 1 (leader) | Balabat, Charm Angel | charmbalabat-ctrl | `base.css` | Experiment 0, then added the viewport meta tag to index.html. Styled the page layout and brand panel with CSS Grid, with one column on phones, 2 columns from 1024px, and a centered 1200px container from 1280px. Created the repo and added teammates. |
 | 2 | Mendoza, Mary Stephanie R.| Stephan7e | `nav.css` | I styled the navigation bar with Flexbox, so the links are stacked at 48px tall on phones and sit in one row, with the brand on the left, from 768px. |
-| 3 | De Gracia, Rafael O. | Rafaeldegracia23 | `form.css` | Styled the login card and form with Flexbox, with stacked 48px fields and buttons on phones. From 768px, the checkbox row and two bottom buttons sit side by side, and the card is capped at 32rem. |
-
+| 3 | De Gracia, Rafael O. | Rafaeldegracia23 | `form.css` | Styled the login card and form using a mobile-first Flexbox layout. Stacked fields and buttons to create 48px touch targets for mobile viewports. Added media queries starting at 768px to align the checkbox option row and secondary action buttons side-by-side, capping the card width at 32rem.
+|
 
 ## Experiment 0: the page without the viewport tag
 
@@ -51,8 +50,7 @@ npm run build        # must finish with no errors before you submit
 What did the page look like in DevTools phone mode **before** adding the viewport meta tag?
 What changed **after** adding it?
 
-
-> Before the viewport tag in DevTools phone mode (iPhone SE), the page looked zoomed out and tiny. The text was hard to read, and the whole layout looked like a shrunken desktop page, even though it is built with React. This happens because, without the tag, mobile browsers pretend the screen is about 980px wide and then shrink the whole page to fit. Because of that, our phone CSS and our 768px and 1024px media queries did not behave the way we planned. After adding the viewport tag
+> Prior to adding the viewport meta tag, the page rendered as a shrunken desktop site on mobile devices (e.g., iPhone SE). The browser emulated a 980px desktop width and zoomed out the entire interface, making text unreadable and preventing our mobile CSS and media queries from triggering correctly. After adding the viewport tag, the browser accurately respected the device's actual width, correctly rendering the mobile layout, executing our breakpoints, and scaling the text to a readable size.
 
 
 ## DevTools test results
@@ -71,18 +69,15 @@ What changed **after** adding it?
 
 Using **Show media queries** and dragging slowly from 360 px to 1280 px, the layout changed at these exact widths:
 
-
 >  768 px: the navigation turned into one row (brand on the left, links on the right). The checkbox and "Forgot password?" moved side by side, and the two bottom buttons went side by side.
 >  1024 px: the brand panel and login card moved side by side in 2 columns. The footer changed to 3 columns, the heading became larger, and the extra list of perks appeared.
 >  1280 px: the content stopped stretching and stayed centered at a maximum width of 1200 px.
 >
 > No width looked broken. From 360 px to 1280 px there was no sideways scrollbar, no text was cut off, and nothing overlapped.
 
-
 Screenshots are in `screenshots/` as `360.png`, `768.png`, `1024.png`, `1280.png`.
 
 
 ## What our group learned (leader writes this last)
-
 
 > We learned that mobile-first means building the phone layout first and then only adding extra layout as the screen gets wider, so we used `min-width` media queries and never undid our mobile styles. We saw that the viewport meta tag is what makes this work on phones, since the page looked tiny and zoomed out without it. Grid was good for the page layout and footer, while Flexbox was good for the navigation and form parts. We also learned to make tap targets at least 48 px, to style `:focus-visible` along with `:hover`, and to test at 360, 768, 1024 and 1280 px in DevTools. Working with separate branches, commits and reviewed pull requests helped us each edit our own CSS file without conflicts.
