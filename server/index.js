@@ -1,3 +1,4 @@
+const authenticateToken = require("./middleware/auth");
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -55,6 +56,7 @@ app.use(
             return res.status(400).json({
                 error: "Email and password are required."
             });
+
         }
 
         //Find the user
@@ -91,6 +93,30 @@ app.use(
                         email: user.email}
                     });
                 });
+
+                // Protected student profile endpoint
+                app.get("/api/v1/users/me", authenticateToken, (req, res) => {
+                // Find the authenticated user
+                    const user = users.find(
+                        (item) => item.id === req.user.id
+                );
+
+                // Check if the user exists
+                    if (!user) {
+                        return res.status(404).json({
+                            error: "User not found."
+                        });
+                    }
+
+                // Return the user's profile
+                    return res.status(200).json({
+                        user: {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email
+                        }
+                    });
+                }); 
 
                 // Start the server
                 app.listen(PORT, () => {
