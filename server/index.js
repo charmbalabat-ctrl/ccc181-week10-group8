@@ -17,116 +17,114 @@ if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is missing from the .env file.");
 }
 
-//logs live
+// logs live
 // Custom Request Logger Middleware
 app.use((req, res, next) => {
     console.log(`[${new Date().toLocaleTimeString()}] ${req.method} request made to: ${req.url}`);
     next();
 });
 
-//Middleware
+// Middleware
 app.use(express.json());
 
 app.use(
     cors({
         origin: CLIENT_ORIGIN
     })
+);
+
+// Demo student account
+const users = [
+    {
+        id: 1,
+        name: "Demo Student",
+        email: "student@campusconnect.test",
+        passwordHash: bcrypt.hashSync("Campus26", 10)
+    }
+];
+
+// Health endpoint
+app.get("/api/v1/health", (req, res) => {
+    return res.status(200).json({
+        status: "ok"
+    });
+});
+
+// Login endpoint
+app.post("/api/v1/sessions", (req, res) => {
+    const { email, password } = req.body || {};
+
+    // Check required fields
+    if (
+        typeof email !== "string" ||
+        typeof password !== "string" ||
+        !email.trim() ||
+        !password
+    ) {
+        return res.status(400).json({
+            error: "Email and password are required."
+        });
+    }
+
+    // Find the user
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = users.find(
+        (item) => item.email.toLowerCase() === normalizedEmail
     );
 
-    //Demo student account
-    const users = [
-        {
-            id: 1,
-            name: "Demo Student",
-            email: "student@campusconnect.test",
-            passwordHash: bcrypt.hashSync("Campus26",10)
-        }
-    ];
-
-    // Health endpoint
-    app.get("/api/v1/health", (req, res) => {
-        return res.status(200).json({
-            status: "ok"
+    // Check email and password
+    if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+        return res.status(401).json({
+            error: "Invalid email or password."
         });
-    });
+    }
 
-    // Login endpoint
-    app.post("/api/v1/sessions", (req,res) => {
-        const { email, password } = req.body || {};
-
-        // Check required fields
-        if (
-            typeof email !== "string" ||
-            typeof password !== "string" ||
-            !email.trim() ||
-            !password
-        ) {
-            return res.status(400).json({
-                error: "Email and password are required."
-            });
-
+    // Generate JWT token
+    const token = jwt.sign(
+        {
+            id: user.id
+        },
+        JWT_SECRET,
+        {
+            expiresIn: "1h"
         }
+    );
 
-        //Find the user
-        const normalizedEmail = email.trim().toLowerCase();
+    // Return successful login response
+    return res.status(200).json({
+        token,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }
+    });
+});
 
-        const user = users.find(
-            (item) => item.email.toLowerCase() === normalizedEmail
-            );
+// Protected student profile endpoint (Updated to match assignment spec)
+app.get("/api/v1/users/me", authenticateToken, (req, res) => {
+    // Find the authenticated user
+    const user = users.find(
+        (item) => item.id === req.user.id
+    );
 
-            // Check email and password
-            if(!user || !bcrypt.compareSync(password, user.passwordHash)) {
-                return res.status(401).json({
-                    error: "Invalid email or password."
-                });
-            }
+    // Check if the user exists (returns 401 per contract rules)
+    if (!user) {
+        return res.status(401).json({
+            error: "Not logged in."
+        });
+    }
 
-            //Generate JWT token
-            const token= jwt.sign(
-                {
-                    id: user.id
-                },
-                JWT_SECRET,
-                {
-                    expiresIn: "1h"
-                }
-                );
+    // Return the flat profile object directly
+    return res.status(200).json({
+        id: user.id,
+        name: user.name,
+        email: user.email
+    });
+});
 
-                // Return successful login response
-                return res.status(200).json({
-                    token,
-                    user: {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email}
-                    });
-                });
-
-                // Protected student profile endpoint
-                app.get("/api/v1/users/me", authenticateToken, (req, res) => {
-                // Find the authenticated user
-                    const user = users.find(
-                        (item) => item.id === req.user.id
-                );
-
-                // Check if the user exists
-                    if (!user) {
-                        return res.status(404).json({
-                            error: "User not found."
-                        });
-                    }
-
-                // Return the user's profile
-                    return res.status(200).json({
-                        user: {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email
-                        }
-                    });
-                }); 
-
-                // Start the server
-                app.listen(PORT, () => {
-                    console.log(`API running on http://localhost:${PORT}`);
-                });
+// Start the server
+app.listen(PORT, () => {
+    console.log(`API running on http://localhost:${PORT}`);
+});

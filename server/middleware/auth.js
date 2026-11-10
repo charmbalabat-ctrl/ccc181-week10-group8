@@ -15,7 +15,7 @@ function authenticateToken(req, res, next) {
 
     if (!authHeader) {
         return res.status(401).json({
-            error: "Access denied. No token provided."
+            error: "Not logged in."
         });
     }
 
@@ -23,7 +23,7 @@ function authenticateToken(req, res, next) {
 
     if (parts.length !== 2 || parts[0] !== "Bearer" || !parts[1]) {
         return res.status(401).json({
-            error: "Invalid authorization format."
+            error: "Not logged in."
         });
     }
 
@@ -37,7 +37,7 @@ function authenticateToken(req, res, next) {
         next();
     } catch (error) {
         return res.status(401).json({
-            error: "Invalid or expired token."
+            error: "Not logged in."
         });
     }
 }
