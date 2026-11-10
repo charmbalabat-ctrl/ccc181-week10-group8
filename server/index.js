@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 dotenv.config();
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,13 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is missing from the .env file.");
 }
+
+//logs live
+// Custom Request Logger Middleware
+app.use((req, res, next) => {
+    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} request made to: ${req.url}`);
+    next();
+});
 
 //Middleware
 app.use(express.json());
