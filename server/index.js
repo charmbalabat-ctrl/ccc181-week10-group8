@@ -17,7 +17,6 @@ if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is missing from the .env file.");
 }
 
-// logs live
 // Custom Request Logger Middleware
 app.use((req, res, next) => {
     console.log(`[${new Date().toLocaleTimeString()}] ${req.method} request made to: ${req.url}`);
@@ -54,33 +53,37 @@ app.get("/api/v1/health", (req, res) => {
 app.post("/api/v1/sessions", (req, res) => {
     const { email, password } = req.body || {};
 
-    // Check required fields
-    if (
-        typeof email !== "string" ||
-        typeof password !== "string" ||
-        !email.trim() ||
-        !password
-    ) {
+    // 1. Check types (Must be text)
+    if (typeof email !== "string" || typeof password !== "string") {
         return res.status(400).json({
-            error: "Email and password are required."
+            error: "Invalid input types."
         });
     }
 
-    // Find the user
-    const normalizedEmail = email.trim().toLowerCase();
+    // Simple Email Format Validation Regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    // 2. Validate email format ("must look like an email")
+    if (!emailRegex.test(email.trim())) {
+        return res.status(400).json({
+            error: "Invalid email format."
+        });
+    }
+
+    // 3. Find the user by email (lowercase first)
+    const normalizedEmail = email.trim().toLowerCase();
     const user = users.find(
         (item) => item.email.toLowerCase() === normalizedEmail
     );
 
-    // Check email and password
+    // 4. Compare credentials using bcrypt
     if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
         return res.status(401).json({
             error: "Invalid email or password."
         });
     }
 
-    // Generate JWT token
+    // 5. Create a token with jsonwebtoken (expires in 1 hour)
     const token = jwt.sign(
         {
             id: user.id
@@ -91,7 +94,7 @@ app.post("/api/v1/sessions", (req, res) => {
         }
     );
 
-    // Return successful login response
+    // Return token and flat user info
     return res.status(200).json({
         token,
         user: {
@@ -102,21 +105,18 @@ app.post("/api/v1/sessions", (req, res) => {
     });
 });
 
-// Protected student profile endpoint (Updated to match assignment spec)
+// Protected student profile endpoint
 app.get("/api/v1/users/me", authenticateToken, (req, res) => {
-    // Find the authenticated user
     const user = users.find(
         (item) => item.id === req.user.id
     );
 
-    // Check if the user exists (returns 401 per contract rules)
     if (!user) {
         return res.status(401).json({
             error: "Not logged in."
         });
     }
 
-    // Return the flat profile object directly
     return res.status(200).json({
         id: user.id,
         name: user.name,
